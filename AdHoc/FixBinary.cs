@@ -254,10 +254,12 @@ namespace org.fix {
             /**
             The total open interest for the market at the close of the prior trading session.
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5792), SemanticType("int")] Int32NULL? OpenInterestQty;
             /**
             The total cleared volume of instrument traded during the prior trading session.
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5791), SemanticType("int")] Int32NULL? ClearedVolume;
             /**
             Allowable high limit price for the trading day
@@ -274,6 +276,7 @@ namespace org.fix {
             /**
             Indicates the quantity that a contract will decay daily by once the decay start date is reached
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5818), SemanticType("Qty")] Int32NULL? DecayQuantity;
             /**
             Indicates the date at which a decaying contract will begin to decay
@@ -282,11 +285,13 @@ namespace org.fix {
             /**
             Fixed contract value assigned to each product
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5849), SemanticType("Qty")] Int32NULL? OriginalContractSize;
             /**
             Number of deliverable units per instrument, e.g., peak days in maturity month or number of calendar days in
             maturity month
             */
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(231), SemanticType("int")] Int32NULL? ContractMultiplier;
             /**
             Indicates the type of multiplier being applied to the product. Optionally used in combination with tag
@@ -505,10 +510,12 @@ namespace org.fix {
             /**
             The total open interest for the market at the close of the prior trading session
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5792), SemanticType("Qty")] Int32NULL? OpenInterestQty;
             /**
             The total cleared volume of instrument traded during the prior trading session
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5791), SemanticType("Qty")] Int32NULL? ClearedVolume;
             /**
             Allowable high limit price for the trading day
@@ -693,6 +700,7 @@ namespace org.fix {
                 /**
                 Market Data entry size
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(271), SemanticType("Qty")] Int32NULL? MDEntrySize;
                 /**
                 Security ID
@@ -705,6 +713,7 @@ namespace org.fix {
                 /**
                 In Book entry - aggregate number of orders at given price level
                 */
+                // physics: a count — floored at 0 and unbounded above → consider [A]
                 [Tag(346), SemanticType("int")] Int32NULL? NumberOfOrders;
                 /**
                 Aggregate book level
@@ -735,6 +744,7 @@ namespace org.fix {
                 /**
                 Visible qty of order
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(37706), SemanticType("int")] Int32NULL? MDDisplayQty;
                 /**
                 Reference to corresponding Price and Security ID, sequence of MD entry in the message
@@ -773,6 +783,7 @@ namespace org.fix {
                 /**
                 Market Data entry size
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(271), SemanticType("Qty")] Int32NULL? MDEntrySize;
                 /**
                 Security ID
@@ -898,6 +909,7 @@ namespace org.fix {
                 /**
                 Indicative Opening Quantity
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(271), SinceVersion(8), SemanticType("Qty")] Int32NULL? MDEntrySize;
             }
         }
@@ -924,6 +936,7 @@ namespace org.fix {
                 /**
                 Cumulative traded volume
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(271), SemanticType("Qty")] int MDEntrySize;
                 /**
                 Security ID
@@ -1007,10 +1020,12 @@ namespace org.fix {
                 /**
                 Market Data entry quantity
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(271), SemanticType("Qty")] Int32NULL? MDEntrySize;
                 /**
                 Aggregate number of orders at the given price level
                 */
+                // physics: a count — floored at 0 and unbounded above → consider [A]
                 [Tag(346), SemanticType("int")] Int32NULL? NumberOfOrders;
                 /**
                 Aggregate book position
@@ -1069,6 +1084,7 @@ namespace org.fix {
                 /**
                 Quantity requested
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(38), SemanticType("Qty")] Int32NULL? OrderQty;
                 /**
                 Type of quote requested
@@ -1241,10 +1257,12 @@ namespace org.fix {
             /**
             The total cleared volume of instrument traded during the prior trading session
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5791), SemanticType("Qty")] Int32NULL? ClearedVolume;
             /**
             The total open interest for the market at the close of the prior trading session.
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5792), SemanticType("Qty")] Int32NULL? OpenInterestQty;
             /**
             Allowable low limit price for the trading day
@@ -1383,6 +1401,7 @@ namespace org.fix {
                 /**
                 Consolidated trade quantity
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(271), SemanticType("Qty")] int MDEntrySize;
                 /**
                 Security ID as defined by CME
@@ -1395,6 +1414,7 @@ namespace org.fix {
                 /**
                 The total number of real orders per instrument that participated in a match step within a match event
                 */
+                // physics: a count — floored at 0 and unbounded above → consider [A]
                 [Tag(346), SemanticType("int")] Int32NULL? NumberOfOrders;
                 /**
                 Indicates which side is the aggressor or if there is no aggressor
@@ -1425,6 +1445,7 @@ namespace org.fix {
                 /**
                 Quantity bought or sold on this last fill
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(32), SemanticType("Qty")] int LastQty;
             }
         }
@@ -1463,6 +1484,7 @@ namespace org.fix {
                 /**
                 Visible order qty
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(37706), SemanticType("Qty")] Int32NULL? MDDisplayQty;
                 /**
                 Security ID
@@ -1501,6 +1523,7 @@ namespace org.fix {
             /**
             Total number of packets that constitutes a single instrument order book
             */
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(37709), SemanticType("int")] uint NoChunks;
             /**
             Chunk sequence
@@ -1530,6 +1553,7 @@ namespace org.fix {
                 /**
                 Visible order qty
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(37706), SemanticType("Qty")] int MDDisplayQty;
                 /**
                 Market Data entry type
@@ -1564,6 +1588,7 @@ namespace org.fix {
                 /**
                 Market Data entry size
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(271), SemanticType("Qty")] Int32NULL? MDEntrySize;
                 /**
                 Security ID
@@ -1576,6 +1601,7 @@ namespace org.fix {
                 /**
                 In Book entry - aggregate number of orders at given price level
                 */
+                // physics: a count — floored at 0 and unbounded above → consider [A]
                 [Tag(346), SemanticType("int")] Int32NULL? NumberOfOrders;
                 /**
                 Aggregate book level
@@ -1606,6 +1632,7 @@ namespace org.fix {
                 /**
                 Visible qty of order
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(37706), SemanticType("Qty")] Int32NULL? MDDisplayQty;
                 /**
                 Reference to corresponding Price and Security ID, sequence of MD entry in the message
@@ -1652,6 +1679,7 @@ namespace org.fix {
                 /**
                 Visible order qty
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(37706), SemanticType("Qty")] Int32NULL? MDDisplayQty;
                 /**
                 Security ID
@@ -1694,6 +1722,7 @@ namespace org.fix {
                 /**
                 Consolidated trade quantity
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(271), SemanticType("Qty")] int MDEntrySize;
                 /**
                 Security ID as defined by CME
@@ -1706,6 +1735,7 @@ namespace org.fix {
                 /**
                 The total number of real orders per instrument that participated in a match step within a match event
                 */
+                // physics: a count — floored at 0 and unbounded above → consider [A]
                 [Tag(346), SemanticType("int")] int NumberOfOrders;
                 /**
                 Indicates which side is the aggressor or if there is no aggressor
@@ -1736,6 +1766,7 @@ namespace org.fix {
                 /**
                 Quantity bought or sold on this last fill
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(32), SemanticType("Qty")] int LastQty;
             }
         }
@@ -1766,6 +1797,7 @@ namespace org.fix {
                 /**
                 Market Data entry size
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(271), SemanticType("Qty")] Int32NULL? MDEntrySize;
                 /**
                 Security ID
@@ -1891,6 +1923,7 @@ namespace org.fix {
                 /**
                 Indicative Opening Quantity
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(271), SemanticType("Qty")] Int32NULL? MDEntrySize;
             }
         }
@@ -1958,10 +1991,12 @@ namespace org.fix {
                 /**
                 Market Data entry quantity
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(271), SemanticType("Qty")] Int32NULL? MDEntrySize;
                 /**
                 Aggregate number of orders at the given price level
                 */
+                // physics: a count — floored at 0 and unbounded above → consider [A]
                 [Tag(346), SemanticType("int")] Int32NULL? NumberOfOrders;
                 /**
                 Aggregate book position
@@ -2008,6 +2043,7 @@ namespace org.fix {
             /**
             Total number of packets that constitutes a single instrument order book
             */
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(37709), SemanticType("int")] uint NoChunks;
             /**
             Chunk sequence
@@ -2037,6 +2073,7 @@ namespace org.fix {
                 /**
                 Visible order qty
                 */
+                // physics: a quantity — non-negative and clustered low → consider [A]
                 [Tag(37706), SemanticType("Qty")] int MDDisplayQty;
                 /**
                 Market Data entry type
@@ -2182,10 +2219,12 @@ namespace org.fix {
             /**
             The total open interest for the market at the close of the prior trading session.
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5792), SemanticType("Qty")] Int32NULL? OpenInterestQty;
             /**
             The total cleared volume of instrument traded during the prior trading session.
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5791), SemanticType("Qty")] Int32NULL? ClearedVolume;
             /**
             Allowable high limit price for the trading day
@@ -2202,6 +2241,7 @@ namespace org.fix {
             /**
             Indicates the quantity that a contract will decay daily by once the decay start date is reached
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5818), SemanticType("Qty")] Int32NULL? DecayQuantity;
             /**
             Indicates the date at which a decaying contract will begin to decay
@@ -2210,11 +2250,13 @@ namespace org.fix {
             /**
             Fixed contract value assigned to each product
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5849), SemanticType("Qty")] Int32NULL? OriginalContractSize;
             /**
             Number of deliverable units per instrument, e.g., peak days in maturity month or number of calendar days in
             maturity month
             */
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(231), SemanticType("int")] Int32NULL? ContractMultiplier;
             /**
             Indicates the type of multiplier being applied to the product. Optionally used in combination with tag
@@ -2458,10 +2500,12 @@ namespace org.fix {
             /**
             The total cleared volume of instrument traded during the prior trading session
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5791), SemanticType("Qty")] Int32NULL? ClearedVolume;
             /**
             The total open interest for the market at the close of the prior trading session.
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5792), SemanticType("Qty")] Int32NULL? OpenInterestQty;
             /**
             Allowable low limit price for the trading day
@@ -2709,10 +2753,12 @@ namespace org.fix {
             /**
             The total open interest for the market at the close of the prior trading session
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5792), SemanticType("Qty")] Int32NULL? OpenInterestQty;
             /**
             The total cleared volume of instrument traded during the prior trading session
             */
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(5791), SemanticType("Qty")] Int32NULL? ClearedVolume;
             /**
             Allowable high limit price for the trading day

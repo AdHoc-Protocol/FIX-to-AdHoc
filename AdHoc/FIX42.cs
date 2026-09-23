@@ -393,6 +393,7 @@ namespace org.fix {
             [Tag(95), A, FixType("LENGTH")] int? RawDataLength;
             [Tag(96), FixType("DATA"), D(65535)] Binary[,,] RawData;
             [Tag(141)] bool? ResetSeqNumFlag;
+            // physics: a quantity — non-negative and clustered low → consider [A]
             [Tag(383)] int? MaxMessageSize;
             [Tag(384)] NoMsgTypesGroup[,,] NoMsgTypes;
             public class NoMsgTypesGroup {
@@ -905,6 +906,7 @@ namespace org.fix {
             [Tag(58)] string Text;
             [Tag(354), A, FixType("LENGTH")] int? EncodedTextLen;
             [Tag(355), FixType("DATA"), D(65535)] Binary[,,] EncodedText;
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(157)] int? NumDaysInterest;
             [Tag(158), FixType("FLOAT")] double? AccruedInterestRate;
             [Tag(78)] NoAllocsGroup[,,] NoAllocs;
@@ -984,6 +986,7 @@ namespace org.fix {
             Header header;
             [Tag(66)] string ListID;
             [Tag(429)] int ListStatusType;
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(82)] int NoRpts;
             [Tag(431)] int ListOrderStatus;
             [Tag(83)] int RptSeq;
@@ -1285,6 +1288,7 @@ namespace org.fix {
                 [Tag(299)] string QuoteEntryID;
                 [Tag(288)] string MDEntryBuyer;
                 [Tag(289)] string MDEntrySeller;
+                // physics: a count — floored at 0 and unbounded above → consider [A]
                 [Tag(346)] int? NumberOfOrders;
                 [Tag(290)] int? MDEntryPositionNo;
                 [Tag(58)] string Text;
@@ -1351,6 +1355,7 @@ namespace org.fix {
                 [Tag(299)] string QuoteEntryID;
                 [Tag(288)] string MDEntryBuyer;
                 [Tag(289)] string MDEntrySeller;
+                // physics: a count — floored at 0 and unbounded above → consider [A]
                 [Tag(346)] int? NumberOfOrders;
                 [Tag(290)] int? MDEntryPositionNo;
                 [Tag(387), FixType("QTY")] double? TotalVolumeTraded;
@@ -1824,6 +1829,7 @@ namespace org.fix {
             [Tag(392)] string ListName;
             [Tag(393)] int TotalNumSecurities;
             [Tag(394)] int BidType;
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(395)] int? NumTickets;
             [Tag(15), FixType("CURRENCY")] string Currency;
             [Tag(396), FixType("AMT")] double? SideValue1;
@@ -1861,6 +1867,7 @@ namespace org.fix {
             [Tag(415)] int? ProgPeriodInterval;
             [Tag(416)] IncTaxInd? IncTaxInd;
             [Tag(121)] bool? ForexReq;
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(417)] int? NumBidders;
             [Tag(75), FixType("LOCALMKTDATE")] string TradeDate;
             [Tag(418)] TradeType TradeType;

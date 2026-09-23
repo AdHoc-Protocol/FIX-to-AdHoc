@@ -156,6 +156,39 @@ public class FIX2AdHoc {
 		try { Long.parseLong(s.trim()); return true; } catch (NumberFormatException e) { return false; }
 	}
 
+	// ═══════════════════════════════ varint candidates (physics hints) ═══════════════════════════════
+
+	/** Varint applies only to integers wider than one byte; the generator rejects it anywhere else. */
+	static boolean varintCapable(String csType) {
+		switch (csType) {
+			case "short": case "ushort": case "int": case "uint": case "long": case "ulong": return true;
+			default: return false;
+		}
+	}
+
+	/**
+	 * Neither FIX dialect states where a number's values actually sit, but a field's name, its description or a
+	 * one-sided bound often implies it. Where such a hint exists this returns a comment naming the candidate
+	 * attribute and the reason, emitted on the field itself: choosing a varint needs knowledge of the venue's
+	 * traffic that a converter does not have, and the question must not be dropped silently.
+	 *
+	 * @param minOnly the declared minimum when the source gives a floor and no ceiling, otherwise null
+	 */
+	static String physicsHint(String name, String description, String csType, String minOnly) {
+		if (!varintCapable(csType)) return null;
+		if (minOnly != null)
+			return "physics: floor " + minOnly + " declared with no ceiling → consider [A(" + minOnly + ")] if the values cluster near the floor";
+		String d = description == null ? "" : description.toLowerCase();
+		if (name.startsWith("Num") || (name.startsWith("No") && 2 < name.length() && Character.isUpperCase(name.charAt(2)))
+				|| d.startsWith("number of") || d.contains("count of") || d.contains("number of repeating"))
+			return "physics: a count — floored at 0 and unbounded above → consider [A]";
+		if (name.endsWith("Qty") || name.endsWith("Quantity") || name.endsWith("Size") || name.endsWith("Volume"))
+			return "physics: a quantity — non-negative and clustered low → consider [A]";
+		if (name.endsWith("Px") || name.endsWith("Price"))
+			return "physics: a price — the values cluster around the instrument's level, not around zero → consider [X(amplitude, level)] once that level is known";
+		return null;
+	}
+
 	// ═══════════════════════════════════════════ SBE ═══════════════════════════════════════════
 
 	/** Simple Binary Encoding schema → one AdHoc project. */
@@ -460,14 +493,23 @@ public class FIX2AdHoc {
 						String type = attr(f, "type");
 						boolean optional = "optional".equals(attr(f, "presence"));
 						Element target = registry.get(type);
-						String decl;
+						String decl, csType;
 						if (target == null) {
 							Prim p = Prim.of(type, 1);
 							if (p == null) {
 								System.err.println("WARNING " + file.getFileName() + ": field " + fname + " has unknown type `" + type + "`");
 								decl = "byte " + fn + "; // unknown type " + type;
-							} else decl = p.field(fn, optional);
-						} else decl = typedField(target, fn, optional);
+								csType = "";
+							} else {
+								decl = p.field(fn, optional);
+								csType = p.len == 1 ? p.cs : "";
+							}
+						} else {
+							decl = typedField(target, fn, optional);
+							csType = scalarOf(target);
+						}
+						String hint = physicsHint(fname, attr(f, "description"), csType, floorOnly(target));
+						if (hint != null) sb.append(indent).append("// ").append(hint).append('\n');
 						sb.append(indent).append(attrsOf(f, decl)).append('\n');
 						break;
 					}
@@ -534,6 +576,20 @@ public class FIX2AdHoc {
 			if (charset != null) a.add("CharacterEncoding(" + str(charset) + ")");
 			if (capped) a.add("DeclaredMaxLength(" + declared + ")");
 			return "[" + String.join(", ", a) + "] " + (charset != null ? "string " : "Binary[,,] ") + fn + ";";
+		}
+
+		/** The AdHoc scalar behind a named `<type>` declaration, or "" when the target is not a single scalar. */
+		String scalarOf(Element target) {
+			if (target == null || !local(target).equals("type") || "constant".equals(attr(target, "presence"))) return "";
+			Prim p = prim(target);
+			return p.len == 1 ? p.cs : "";
+		}
+
+		/** The declared minimum of a `<type>` that states a floor and no ceiling, otherwise null. */
+		String floorOnly(Element target) {
+			if (target == null || !local(target).equals("type")) return null;
+			String min = attr(target, "minValue"), max = attr(target, "maxValue");
+			return min != null && max == null && isInteger(min) && !"".equals(scalarOf(target)) ? min.trim() : null;
 		}
 
 		/** A field whose type is a named declaration (typedef / composite / enum / set / plain or constant type). */
@@ -849,7 +905,10 @@ public class FIX2AdHoc {
 				switch (local(m)) {
 					case "field": {
 						String fn = unique(mname, fieldNames);
-						sb.append(indent).append(field(mname, fn, required)).append('\n');
+						String decl = field(mname, fn, required);
+						String hint = lastFieldHint;
+						if (hint != null) sb.append(indent).append("// ").append(hint).append('\n');
+						sb.append(indent).append(decl).append('\n');
 						break;
 					}
 					case "component": {
@@ -887,8 +946,12 @@ public class FIX2AdHoc {
 
 		static String lowerFirst(String s) { return s.isEmpty() ? s : Character.toLowerCase(s.charAt(0)) + s.substring(1); }
 
+		/** Set by {@link #field} to the varint candidate of the field it just rendered, or null. */
+		String lastFieldHint;
+
 		/** One field reference: C# type from the FIX type, enum when the field has an enumerated value set. */
 		String field(String fixName, String fn, boolean required) {
+			lastFieldHint = null;
 			Element def = fieldDefs.get(fixName);
 			if (def == null) {
 				System.err.println("WARNING " + file.getFileName() + ": field `" + fixName + "` is not declared in <fields>");
@@ -924,6 +987,8 @@ public class FIX2AdHoc {
 			if (en != null) { cs = en; value = true; }
 			String vals = valuesOf.get(fixName);
 			if (vals != null) a.add("Values(" + str(vals) + ")");
+			// An enumerated field is a code, not a magnitude, and a field that already carries [A] needs no hint.
+			if (en == null && !a.contains("A")) lastFieldHint = physicsHint(fixName, null, cs, null);
 			String attrs = "[" + String.join(", ", a) + "] ";
 			if (cs.startsWith("[D(")) return "[" + String.join(", ", a) + ", " + cs.substring(1) + " " + fn + ";";
 			return attrs + cs + (value && !required ? "?" : "") + " " + fn + ";";

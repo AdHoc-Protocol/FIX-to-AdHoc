@@ -373,6 +373,7 @@ namespace org.fix {
             SpreadOrBenchmarkCurveData spreadOrBenchmarkCurveData;
             YieldData yieldData;
             [Tag(381), FixType("AMT")] double? GrossTradeAmt;
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(157)] int? NumDaysInterest;
             [Tag(230), FixType("LOCALMKTDATE")] string ExDate;
             [Tag(158), FixType("PERCENTAGE")] double? AccruedInterestRate;
@@ -805,6 +806,7 @@ namespace org.fix {
             [Tag(58)] string Text;
             [Tag(354), A, FixType("LENGTH")] int? EncodedTextLen;
             [Tag(355), FixType("DATA"), D(65535)] Binary[,,] EncodedText;
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(157)] int? NumDaysInterest;
             [Tag(158), FixType("PERCENTAGE")] double? AccruedInterestRate;
             [Tag(159), FixType("AMT")] double? AccruedInterestAmt;
@@ -867,6 +869,7 @@ namespace org.fix {
             Header header;
             [Tag(66)] string ListID;
             [Tag(429)] ListStatusType ListStatusType;
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(82)] int NoRpts;
             [Tag(431)] ListOrderStatus ListOrderStatus;
             [Tag(83)] int RptSeq;
@@ -1313,6 +1316,7 @@ namespace org.fix {
             [Tag(392)] string ListName;
             [Tag(393)] int TotNoRelatedSym;
             [Tag(394)] BidType BidType;
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(395)] int? NumTickets;
             [Tag(15), FixType("CURRENCY")] string Currency;
             [Tag(396), FixType("AMT")] double? SideValue1;
@@ -1328,6 +1332,7 @@ namespace org.fix {
             [Tag(415)] int? ProgPeriodInterval;
             [Tag(416)] IncTaxInd? IncTaxInd;
             [Tag(121)] bool? ForexReq;
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(417)] int? NumBidders;
             [Tag(75), FixType("LOCALMKTDATE")] string TradeDate;
             [Tag(418)] BidTradeType BidTradeType;
@@ -2161,6 +2166,7 @@ namespace org.fix {
             [Tag(355), FixType("DATA"), D(65535)] Binary[,,] EncodedText;
             [Tag(81)] ProcessCode? ProcessCode;
             [Tag(381), FixType("AMT")] double GrossTradeAmt;
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(157)] int? NumDaysInterest;
             [Tag(230), FixType("LOCALMKTDATE")] string ExDate;
             [Tag(158), FixType("PERCENTAGE")] double? AccruedInterestRate;
@@ -2467,6 +2473,7 @@ namespace org.fix {
             [Tag(58)] string Text;
             [Tag(354), A, FixType("LENGTH")] int? EncodedTextLen;
             [Tag(355), FixType("DATA"), D(65535)] Binary[,,] EncodedText;
+            // physics: a count — floored at 0 and unbounded above → consider [A]
             [Tag(157)] int? NumDaysInterest;
             [Tag(158), FixType("PERCENTAGE")] double? AccruedInterestRate;
             [Tag(159), FixType("AMT")] double? AccruedInterestAmt;
@@ -3730,6 +3737,7 @@ namespace org.fix {
                 [Tag(299)] string QuoteEntryID;
                 [Tag(288)] string MDEntryBuyer;
                 [Tag(289)] string MDEntrySeller;
+                // physics: a count — floored at 0 and unbounded above → consider [A]
                 [Tag(346)] int? NumberOfOrders;
                 [Tag(290)] int? MDEntryPositionNo;
                 [Tag(546), FixType("MULTIPLEVALUESTRING"), Values("ScopeValues")] string Scope;
@@ -3778,6 +3786,7 @@ namespace org.fix {
                 [Tag(299)] string QuoteEntryID;
                 [Tag(288)] string MDEntryBuyer;
                 [Tag(289)] string MDEntrySeller;
+                // physics: a count — floored at 0 and unbounded above → consider [A]
                 [Tag(346)] int? NumberOfOrders;
                 [Tag(290)] int? MDEntryPositionNo;
                 [Tag(546), FixType("MULTIPLEVALUESTRING"), Values("ScopeValues")] string Scope;
@@ -4307,6 +4316,7 @@ namespace org.fix {
                 [Tag(943)] string TimeBracket;
                 CommissionData commissionData;
                 [Tag(381), FixType("AMT")] double? GrossTradeAmt;
+                // physics: a count — floored at 0 and unbounded above → consider [A]
                 [Tag(157)] int? NumDaysInterest;
                 [Tag(230), FixType("LOCALMKTDATE")] string ExDate;
                 [Tag(158), FixType("PERCENTAGE")] double? AccruedInterestRate;

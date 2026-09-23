@@ -126,6 +126,7 @@ namespace org.fix {
                 [Tag(83), SemanticType("SequenceNumber")] byte RptSeq;
                 [Tag(276)] QuoteCondition QuoteCondition;
                 [Tag(270), SemanticType("Price")] Decimal64 MdEntryPx;
+                // physics: a count — floored at 0 and unbounded above → consider [A]
                 [Tag(346), SemanticType("NumberOfOrders")] uint NumberOfOrders;
                 [Tag(273), SemanticType("UTCTimestamp")] ulong MdEntryTime;
                 [Tag(271)] IntQty32 MdEntrySize;
@@ -159,6 +160,7 @@ namespace org.fix {
                 [Tag(48)] ulong SecurityId;
                 [Tag(270)] Decimal64 MdEntryPx;
                 [Tag(271)] IntQty32 MdEntrySize;
+                // physics: a count — floored at 0 and unbounded above → consider [A]
                 [Tag(346)] ushort NumberOfOrders;
                 [Tag(279)] MDUpdateAction MdUpdateAction;
                 [Tag(83)] byte RptSeq;
@@ -194,8 +196,10 @@ namespace org.fix {
                     [Tag(22)] char? SecurityIDSource; // values: SecurityIDSource
                     [Tag(60), SemanticType("UTCTimestamp")] ulong TransactTime;
                     [Tag(132), SemanticType("Price")] OptionalPrice BidPx;
+                    // physics: a quantity — non-negative and clustered low → consider [A]
                     [Tag(134), SemanticType("int")] optionalInt64? BidSize;
                     [Tag(133), SemanticType("Price")] OptionalPrice OfferPx;
+                    // physics: a quantity — non-negative and clustered low → consider [A]
                     [Tag(135), SemanticType("int")] optionalInt64? OfferSize;
                 }
             }

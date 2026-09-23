@@ -41,6 +41,102 @@ QuickFIX, from `quickfix/quickfix/spec`: `FIX42.xml`, `FIX44.xml`, `FIX50SP2.xml
 java -cp out org.unirail.FIX2AdHoc samples/FIX44.xml AdHoc
 ```
 
+## Before and after
+
+### SBE — a message with a repeating group
+
+`samples/FixBinary.xml`, 960 lines — [source](samples/FixBinary.xml) → [result](AdHoc/FixBinary.cs)
+
+```xml
+<ns2:message name="ChannelReset4" id="4" description="ChannelReset" blockLength="9" semanticType="X">
+    <field name="TransactTime" id="60" type="uInt64" description="Start of event processing time in number of nanoseconds since Unix epoch" offset="0" semanticType="UTCTimestamp"/>
+    <field name="MatchEventIndicator" id="5799" type="MatchEventIndicator" description="Bitmap field of eight Boolean type indicators reflecting the end of updates for a given Globex event" offset="8" semanticType="MultipleCharValue"/>
+    <group name="NoMDEntries" id="268" description="Number of entries in Market Data message" blockLength="2" dimensionType="groupSize">
+        <field name="MDUpdateAction" id="279" type="MDUpdateTypeNew" description="Market Data update action" sinceVersion="2" semanticType="int"/>
+        <field name="MDEntryType" id="269" type="MDEntryTypeChannelReset" description="Market Data entry type  " semanticType="char"/>
+        <field name="ApplID" id="1180" type="Int16" description="Indicates the channel ID as defined in the XML configuration file" offset="0" sinceVersion="3" semanticType="int"/>
+    </group>
+</ns2:message>
+<!-- … the composite that frames every repeating group … -->
+<composite name="groupSize" description="Repeating group dimensions" semanticType="NumInGroup">
+    <type name="blockLength" primitiveType="uint16"/>
+    <type name="numInGroup" primitiveType="uint8"/>
+</composite>
+```
+
+```csharp
+[BlockLength(9)] class ChannelReset4 {
+    public const int template_id = 4; // SBE message id
+    public const string SEMANTIC_TYPE = "X"; // FIX MsgType
+    /**
+    Start of event processing time in number of nanoseconds since Unix epoch
+    */
+    [Tag(60), SemanticType("UTCTimestamp")] ulong TransactTime;
+    /**
+    Bitmap field of eight Boolean type indicators reflecting the end of updates for a given Globex event
+    */
+    [Tag(5799), SemanticType("MultipleCharValue")] MatchEventIndicator MatchEventIndicator;
+    /**
+    Number of entries in Market Data message
+    */
+    [Tag(268), DimensionType("groupSize"), BlockLength(2), D(255)] NoMDEntriesGroup[,,] NoMDEntries;
+    public class NoMDEntriesGroup {
+        // … the two constant-presence fields become `const`, so nothing of them reaches the wire …
+        [Tag(279), SinceVersion(2), SemanticType("int")] const int MDUpdateAction = 0;
+        [Tag(269), SemanticType("char")] const char MDEntryType = 'J';
+        [Tag(1180), SinceVersion(3), SemanticType("int")] short ApplID;
+    }
+}
+
+[SemanticType("NumInGroup")] class groupSize {    // the dimension composite stays a sub-pack
+    ushort blockLength;
+    byte numInGroup;
+}
+```
+
+### QuickFIX — timestamps and sequence numbers in the standard header
+
+`samples/FIX44.xml`, 6 599 lines — [source](samples/FIX44.xml) → [result](AdHoc/FIX44.cs)
+
+```xml
+<header>
+ <field name='BeginString' required='Y' />
+ <field name='BodyLength' required='Y' />
+ <field name='MsgType' required='Y' />
+ <field name='SecureDataLen' required='N' />
+ <field name='SecureData' required='N' />
+ <field name='MsgSeqNum' required='Y' />
+ <!-- … -->
+ <field name='PossDupFlag' required='N' />
+ <field name='SendingTime' required='Y' />
+ <field name='OrigSendingTime' required='N' />
+</header>
+<!-- … the <fields> section is where the types live … -->
+<field number='34' name='MsgSeqNum' type='SEQNUM' />
+<field number='52' name='SendingTime' type='UTCTIMESTAMP' />
+<field number='9' name='BodyLength' type='LENGTH' />
+```
+
+```csharp
+class Header {
+    [Tag(8)] string BeginString;
+    [Tag(9), A, FixType("LENGTH")] int BodyLength;
+    [Tag(35), Values("MsgTypeValues")] string MsgType;
+    // …
+    [Tag(90), A, FixType("LENGTH")] int? SecureDataLen;
+    [Tag(91), FixType("DATA"), D(65535)] Binary[,,] SecureData;
+    [Tag(34), A, FixType("SEQNUM")] long MsgSeqNum;
+    // …
+    [Tag(43)] bool? PossDupFlag;
+    [Tag(52)] DateTime SendingTime;
+    [Tag(122)] DateTime? OrigSendingTime;
+}
+```
+
+`UTCTIMESTAMP` became `DateTime` because AdHoc models an absolute instant natively; `SEQNUM` and `LENGTH` carry
+`[A]` because FIX defines them as counters with a floor and no ceiling. Read the `[A]` caveat in the QuickFIX
+mapping below before shipping a high-volume session.
+
 ## Shape of a generated file
 
 `namespace org.fix`, `public interface <FileName>`; Packs Inventory on top; messages first, then types /
@@ -76,10 +172,45 @@ groups and typedefs stay sub-packs; custom attribute declarations at the end.
 | `<field name required>`                                   | field with `[Tag(n)]`; `required='N'` → `T?` for value types                                              |
 | field types                                               | INT / DAYOFMONTH / TAGNUM → `int`; FLOAT / PRICE / QTY / AMT / PERCENTAGE / PRICEOFFSET → `double`; CHAR → `char`; BOOLEAN → `bool`; DATA / XMLDATA → `[D(65535)] Binary[,,]`; all remaining types → `string`. Every type that is not INT / STRING / CHAR / BOOLEAN also gets `[FixType("…")]` so the original type survives |
 | **`UTCTIMESTAMP`, `UTCDATEONLY`, `UTCDATE`, `UTCTIMEONLY`** | **`DateTime`** — these are absolute instants and AdHoc models time natively, so the concept is mapped rather than described by a string plus an attribute (and no `[FixType]` is emitted). `LOCALMKTDATE`, `MONTHYEAR`, `LOCALMKTTIME`, `TZTIMEONLY` and `TZTIMESTAMP` stay `string` + `[FixType]`: they carry no UTC instant — a local market date, a month-year coupon period or a local time with an offset denote a *calendar* or *market* value whose meaning depends on the venue's timezone, so forcing them into `DateTime` would invent an instant the wire never carried |
-| **`SEQNUM`, `NUMINGROUP`, `LENGTH`**                      | **`[A] long` / `[A] int`** — FIX defines all three as counters that start at a floor and are unbounded above, which is exactly the distribution `[A]` declares: the wire carries the distance from the floor, so ordinary small values cost one byte instead of four or eight |
+| **`SEQNUM`, `NUMINGROUP`, `LENGTH`**                      | **`[A] long` / `[A] int`** — FIX defines all three as counters with a floor and no ceiling, which is a claim about the *values*, not about how tag-value FIX happens to spell them. The wire carries the distance from the floor. **Check the arithmetic for your session** (see below) |
 | `<field>` with `<value enum description/>`                | `enum FieldName { DESCRIPTION = code }` when all codes are integers (INT-like types) or single characters (CHAR / STRING); otherwise `struct FieldNameValues { const string DESCRIPTION = "code"; }` and the field keeps its C# type with `[Values("FieldNameValues")]`. BOOLEAN value sets (Y/N) are dropped; duplicate codes keep the first description |
 | `<component name>`                                        | project-level class; referenced as a field named after the component (first letter lowered). Components without members are skipped (`MsgTypeGrp` in FIXT 1.1) |
 | `<group name>`                                            | nested `class NameGroup` inside the container + `[Tag(NoXXX)] NameGroup[,,] Name;`, sized by the file's `_DefaultMaxLengthOf` |
+
+## The `[A]` caveat — and it bites sequence numbers
+
+Varint earns its keep only while the number actually sent stays small. The distance from the declared base
+decides the width: 0…127 costs one byte, up to 16 383 two, up to 2 097 151 three, up to 268 435 455 four, and
+beyond that five — where a plain 32-bit field would have cost four. So `[A]` **wins while the typical distance
+from the base stays under about two million, and always loses past 268 435 455.**
+
+`NUMINGROUP` and `LENGTH` sit far below that ceiling and are safe. **`SEQNUM` is not.** A FIX sequence number is
+monotonic and resets only when the session does, so a busy session climbs past 2²⁸ within a day; from that point
+`[A]` costs a fifth byte on **every message, forever**. Before shipping a high-volume session, reconsider the
+attribute on `MsgSeqNum`, `LastMsgSeqNumProcessed`, `NextExpectedMsgSeqNum` and `RefSeqNum`: either drop `[A]`
+and keep a fixed-width `long`, or give it a base that tracks the session (`[A(min)]`) if your sequence resets
+predictably. On a session that resets daily and never passes a few million messages, `[A]` is a clear win.
+
+Nothing about how SBE or tag-value FIX stores these numbers enters this decision — AdHoc lays out its own frame.
+What decides it is where the values sit.
+
+## Varint candidates left to the reader
+
+Neither dialect states the physics of most numbers, but names, descriptions and one-sided bounds often imply it.
+Where the converter sees such a hint on an integer wider than one byte, it emits a comment **on the field** —
+never an invented attribute, because the choice needs traffic knowledge the converter does not have:
+
+```csharp
+// physics: a quantity — non-negative and clustered low → consider [A]
+[Tag(5818), SemanticType("Qty")] Int32NULL? DecayQuantity;
+```
+
+The hints are: a name starting `Num`/`No…` or a description beginning "number of" → a count, `[A]`; a name ending
+`Qty`, `Quantity`, `Size`, `Volume` → a quantity, `[A]`; a name ending `Px` or `Price` → values clustered around
+the instrument's level, `[X(amplitude, level)]`; and an SBE `<type>` declaring a `minValue` with no `maxValue` →
+`[A(min)]`. 90 such comments are emitted across the samples (46 in FixBinary, 23 in FIX50SP2, 10 in FIX44, 7 in
+FIX42, 4 in fix_message_samples); none of the shipped schemas declares a floor-only `<type>`, so that last rule
+never fires here.
 
 ## Collection defaults
 
