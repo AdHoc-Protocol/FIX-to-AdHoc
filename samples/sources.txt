@@ -1,0 +1,15 @@
+# Where every sample comes from: <path in samples/> <page of the original>. Written by fetch-samples.sh;
+# the converter links these pages in the headers of the descriptions.
+example-schema.xml               https://github.com/aeron-io/simple-binary-encoding/blob/master/sbe-samples/src/main/resources/example-schema.xml
+example-extension-schema.xml     https://github.com/aeron-io/simple-binary-encoding/blob/master/sbe-samples/src/main/resources/example-extension-schema.xml
+common-types.xml                 https://github.com/aeron-io/simple-binary-encoding/blob/master/sbe-samples/src/main/resources/common-types.xml
+fix-message-samples.xml          https://github.com/aeron-io/simple-binary-encoding/blob/master/sbe-benchmarks/src/main/resources/fix-message-samples.xml
+car.xml                          https://github.com/aeron-io/simple-binary-encoding/blob/master/sbe-benchmarks/src/main/resources/car.xml
+basic-types-schema.xml           https://github.com/aeron-io/simple-binary-encoding/blob/master/sbe-tool/src/test/resources/basic-types-schema.xml
+composite-elements-schema.xml    https://github.com/aeron-io/simple-binary-encoding/blob/master/sbe-tool/src/test/resources/composite-elements-schema.xml
+group-with-data-schema.xml       https://github.com/aeron-io/simple-binary-encoding/blob/master/sbe-tool/src/test/resources/group-with-data-schema.xml
+FixBinary.xml                    https://github.com/aeron-io/simple-binary-encoding/blob/master/sbe-tool/src/test/resources/FixBinary.xml
+FIX42.xml                        https://github.com/quickfix/quickfix/blob/master/spec/FIX42.xml
+FIX44.xml                        https://github.com/quickfix/quickfix/blob/master/spec/FIX44.xml
+FIX50SP2.xml                     https://github.com/quickfix/quickfix/blob/master/spec/FIX50SP2.xml
+FIXT11.xml                       https://github.com/quickfix/quickfix/blob/master/spec/FIXT11.xml
